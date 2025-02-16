@@ -1,8 +1,9 @@
-import ProfileForm from '@/components/forms/profile-form'
+
 import React from 'react'
 import ProfilePicture from './_components/profile-picture'
 import { db } from '@/lib/db'
 import { currentUser } from '@clerk/nextjs'
+import ProfileForm from '@/components/forms/profile-form'
 
 type Props = {}
 
@@ -70,7 +71,7 @@ const Settings = async (props: Props) => {
           userImage={user?.profileImage || ''}
           onUpload={uploadProfileImage}
         />
-        <ProfileForm
+         <ProfileForm
           user={user}
           onUpdate={updateUserInfo}
         />
