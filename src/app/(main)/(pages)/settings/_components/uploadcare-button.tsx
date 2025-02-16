@@ -1,54 +1,49 @@
-'use client'
-import React, { useEffect, useRef } from 'react'
-import '@uploadcare/blocks/web/lr-file-uploader-regular.min.css'
-import { useRouter } from 'next/navigation'
-
+'use client'; // Only needed if using React Server Components
+import { FileUploaderRegular } from '@uploadcare/react-uploader/next';
+import '@uploadcare/react-uploader/core.css';
+import { useRouter } from 'next/navigation';
+import { useEffect, useRef } from 'react';
 
 type Props = {
-  onUpload: (cdnUrl: string) => void
-}
+  onUpload: (e: string) => any;
+};
 
-const UploadCareButton = ({ onUpload }: Props): JSX.Element => {
-  const router = useRouter()
-  const ctxProviderRef = useRef<HTMLDivElement>(null)
+function UploadCareButton({ onUpload }: Props) {
+  const router = useRouter();
+  const uploaderRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const handleUpload = (e: any) => {
-      const fileUrl = e.detail.cdnUrl
+    const handleUpload = async (e: any) => {
+      const fileUrl = e.detail?.cdnUrl;
       if (fileUrl) {
-        onUpload(fileUrl)
-        router.refresh()
+        await onUpload(fileUrl);
+        router.refresh();
       }
-    }
+    };
 
-    const ctxProvider = ctxProviderRef.current
-    if (ctxProvider) {
-      ctxProvider.addEventListener('file-upload-success', handleUpload)
+    const uploader = uploaderRef.current;
+    if (uploader) {
+      uploader.addEventListener('file-upload-success', handleUpload);
     }
 
     return () => {
-      if (ctxProvider) {
-        ctxProvider.removeEventListener('file-upload-success', handleUpload)
+      if (uploader) {
+        uploader.removeEventListener('file-upload-success', handleUpload);
       }
-    }
-  }, [onUpload, router])
+    };
+  }, [onUpload, router]);
 
   return (
     <div>
-      <lr-config
-        ctx-name="my-uploader"
-        pubkey="60f94312d7ba06c65634"
+      <FileUploaderRegular
+        sourceList="local, camera, facebook, gdrive"
+        cameraModes="photo, video"
+        classNameUploader="uc-light"
+        pubkey="317b330f2e33df57a750"
       />
-      <lr-file-uploader-regular
-        ctx-name="my-uploader"
-        css-src="https://cdn.jsdelivr.net/npm/@uploadcare/blocks@0.35.2/web/lr-file-uploader-regular.min.css"
-      />
-      <lr-upload-ctx-provider
-        ctx-name="my-uploader"
-        ref={ctxProviderRef}
-      />
+      <div ref={uploaderRef} />
     </div>
-  )
+  );
 }
 
-export default UploadCareButton
+export default UploadCareButton;
